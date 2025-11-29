@@ -1,0 +1,48 @@
+{
+    "business_metrics": {
+        "sentiment_index": -0.0117,
+        "total_count": 232366,
+        "counts": {
+            "Neutral": 75828,
+            "Positive": 76915,
+            "Negative": 79623
+        }
+    },
+    "images": {
+        "confusion_matrix": "/content/drive/MyDrive/Colab Notebooks/Hack_28-11-2025/data/report/test_run_2/confusion_matrix.png",
+        "sentiment_pie": "/content/drive/MyDrive/Colab Notebooks/Hack_28-11-2025/data/report/test_run_2/sentiment_pie.png"
+    },
+    "quality_metrics": {
+        "0": {
+            "precision": 0.6700163527984385,
+            "recall": 0.6577424491539686,
+            "f1-score": 0.6638226705254424,
+            "support": 77243.0
+        },
+        "1": {
+            "precision": 0.858688162257037,
+            "recall": 0.8522724339948899,
+            "f1-score": 0.8554682693366319,
+            "support": 77494.0
+        },
+        "2": {
+            "precision": 0.7577584366326313,
+            "recall": 0.7772224297620735,
+            "f1-score": 0.7673670287182357,
+            "support": 77629.0
+        },
+        "accuracy": 0.7625341056781113,
+        "macro avg": {
+            "precision": 0.7621543172293689,
+            "recall": 0.7624124376369773,
+            "f1-score": 0.7622193228601034,
+            "support": 232366.0
+        },
+        "weighted avg": {
+            "precision": 0.7622512900446328,
+            "recall": 0.7625341056781113,
+            "f1-score": 0.7623286008957318,
+            "support": 232366.0
+        }
+    }
+}

@@ -1,0 +1,14 @@
+{
+    "business_metrics": {
+        "sentiment_index": -0.0126,
+        "total_count": 58092,
+        "counts": {
+            "Neutral": 19189,
+            "Positive": 19086,
+            "Negative": 19817
+        }
+    },
+    "images": {
+        "sentiment_pie": "/content/drive/MyDrive/Colab Notebooks/Hack_28-11-2025/data/report/test_run_1/sentiment_pie.png"
+    }
+}
