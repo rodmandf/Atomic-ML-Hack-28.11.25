@@ -4,8 +4,8 @@ import {useState} from "react";
 import {Button} from "@/components/ui/button.tsx";
 import axios from "axios";
 import {Spinner} from "@/components/ui/spinner.tsx";
+import {Download} from "lucide-react";
 
-// Тип для результатов
 type AnalysisResults = {
     business_metrics: {
         sentiment_index: number;
@@ -53,6 +53,7 @@ type AnalysisResults = {
         sentiment_pie: string;
         confusion_matrix?: string;
     };
+    download_id: string;
 };
 
 function App() {
@@ -60,6 +61,7 @@ function App() {
     const [results, setResults] = useState<AnalysisResults | null>(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    const [downloading, setDownloading] = useState(false);
 
     const handleDrop = (files: File[]) => {
         console.log('Uploaded files:', files);
@@ -111,7 +113,49 @@ function App() {
         }
     };
 
-    const handleReset = () => {
+    const handleDownload = async () => {
+        if (!results?.download_id) return;
+
+        setDownloading(true);
+
+        try {
+            const response = await axios.get(
+                `http://localhost:8000/api/download/${results.download_id}`,
+                {
+                    responseType: 'blob'
+                }
+            );
+
+            // Создаем ссылку для скачивания
+            const url = window.URL.createObjectURL(new Blob([response.data]));
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', `predictions_${results.download_id}.csv`);
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+            window.URL.revokeObjectURL(url);
+
+            // Опционально: очистка временных файлов на сервере
+            await axios.delete(`http://localhost:8000/api/cleanup/${results.download_id}`);
+        } catch (error) {
+            console.error('Download error:', error);
+            setError('Ошибка при скачивании файла');
+        } finally {
+            setDownloading(false);
+        }
+    };
+
+    const handleReset = async () => {
+        // Очистка на сервере перед сбросом
+        if (results?.download_id) {
+            try {
+                await axios.delete(`http://localhost:8000/api/cleanup/${results.download_id}`);
+            } catch (error) {
+                console.error('Cleanup error:', error);
+            }
+        }
+
         setFiles([]);
         setResults(null);
         setError(null);
@@ -184,6 +228,25 @@ function App() {
                 {results && (
                     <div className="max-w-7xl mx-auto">
                         <div className="space-y-8">
+                            <div className="flex justify-center">
+                                <Button
+                                    onClick={handleDownload}
+                                    disabled={downloading}
+                                    className="px-6 py-3 !bg-green-600 !text-white hover:!bg-green-700 transition-colors flex items-center gap-2"
+                                >
+                                    {downloading ? (
+                                        <>
+                                            <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+                                            <span>Скачивание...</span>
+                                        </>
+                                    ) : (
+                                        <>
+                                            <Download className="w-5 h-5" />
+                                            <span>Скачать CSV с предсказаниями</span>
+                                        </>
+                                    )}
+                                </Button>
+                            </div>
                             <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
                                 <div className="p-6 bg-white rounded-xl border-2 border-slate-200 shadow-sm">
                                     <div className="text-sm text-slate-600 mb-2">Всего отзывов</div>
