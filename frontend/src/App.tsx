@@ -1,6 +1,8 @@
 import './App.css'
 import {Dropzone, DropzoneContent, DropzoneEmptyState} from "@/components/ui/shadcn-io/dropzone";
 import {useState} from "react";
+import {Button} from "@/components/ui/button.tsx";
+import axios from "axios";
 
 function App() {
     const handleDrop = (files: File[]) => {
@@ -9,6 +11,10 @@ function App() {
     };
 
     const [files, setFiles] = useState<File[]>([]);
+
+    const  handleUpload = async () => {
+        await axios.get("http://localhost:8080")
+    }
 
     return (
         <div className="app">
@@ -47,8 +53,15 @@ function App() {
                     </Dropzone>
                 </div>
 
+                <div className="max-w-3xl mx-auto my-5">
+                    <Button
+                        className="w-full min-h-3 !bg-slate-700 !text-white hover:!bg-slate-600 hover:!shadow-lg transition-all duration-300"
+                        onClick={() => {}}
+                    >Отправить</Button>
+                </div>
+
                 {true &&
-                    <div className="max-w-3xl mx-auto mt-16">
+                    <div className="max-w-3xl mx-auto mt-10">
                         <div className="text-center text-slate-400 py-12 border-2 border-dashed border-slate-200 rounded-2xl">
                             <p className="text-lg">Результаты анализа появятся здесь</p>
                         </div>

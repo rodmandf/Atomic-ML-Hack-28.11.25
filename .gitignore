@@ -10,3 +10,4 @@ models/*
 !models/**/
 !models/**/.gitkeep
 frontend/node_modules
+backend/venv
