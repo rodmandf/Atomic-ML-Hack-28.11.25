@@ -1,0 +1,21 @@
+@import "tailwindcss";
+
+.app {
+    @apply flex flex-col min-h-screen min-w-screen;
+    background: linear-gradient(to bottom, #f8fafc 0%, #ffffff 100%);
+}
+
+.site-header {
+    @apply sticky top-0 z-50 border-b shadow-sm backdrop-blur-md;
+    background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+    color: var(--primary-foreground);
+    border-color: rgba(255, 255, 255, 0.1);
+}
+
+.header-content {
+    @apply max-w-7xl mx-auto flex justify-between items-center px-8 py-4;
+}
+
+.site-content {
+    @apply flex-1 w-full max-w-7xl mx-auto px-8 py-12;
+}
