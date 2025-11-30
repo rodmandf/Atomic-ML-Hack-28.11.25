@@ -7,6 +7,7 @@
  - [Решение на google drive](https://drive.google.com/drive/folders/1cFbbdqjZuUc74jInjJrsB2fwivZJb-VE) 
  - Сайт [artnn.space](http://artnn.space)
  - [Изображения сайта](https://drive.google.com/drive/folders/1vco2jT6tuTXUK-7DNczDp4o2yryRMRjE?usp=share_link)
+ - [Google notebook с описанием решения](https://colab.research.google.com/drive/1OkSg1g-aP6wLo-_VbNY7N76SEk6sQfX5?usp=sharing)
 ## Описание задачи
 
 - **Цель**: автоматический анализ тональности текстовых отзывов (определение класса тональности для каждого отзыва).
