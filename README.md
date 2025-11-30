@@ -1,3 +1,3 @@
 Данный проект представляет собой веб приложение для распознования тональности российских отзывов.
 
-Так как сама модель весит больше 100мб (нельзя выложить на хаб), то прикладываю ссылку к полному проекту на Google Drive: https://drive.google.com/drive/folders/1wjHQxppdlGqDMG1NkY9pH8w_bA18P34Y?usp=sharing
+Так как сама модель весит больше 100мб (нельзя выложить на хаб), то прикладываю ссылку к весам моделей на Google Drive: https://drive.google.com/drive/folders/1YeDkkPC7TYH42Mr8CQerblB2c9naYTiU?usp=sharing
