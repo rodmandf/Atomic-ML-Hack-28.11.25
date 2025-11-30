@@ -3,17 +3,18 @@ from fastapi.responses import JSONResponse, FileResponse
 from fastapi.middleware.cors import CORSMiddleware
 import os
 import shutil
+import tempfile
 from pathlib import Path
 import pandas as pd
 import base64
 import json
+import uuid
 
 from inference import process_and_predict
 from analytics import generate_analytics_report
 
-app = FastAPI(title="api hack&change")
+app = FastAPI(title="Atomic ML API")
 
-# CORS для фронтенда
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -22,10 +23,18 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-MODEL_DIR = Path("./models/cointegrated_ART")
+BASE_DIR = Path(__file__).parent.parent
+MODEL_DIR = BASE_DIR / "models" / "cointegrated_ART"
 
-RESULTS_DIR = Path("./temp_results")
+if not MODEL_DIR.exists():
+    print(f"WARNING: Model directory not found at {MODEL_DIR}")
+    print(f"Please place your model in: {MODEL_DIR.absolute()}")
+else:
+    print(f"Model found at: {MODEL_DIR.absolute()}")
+
+RESULTS_DIR = BASE_DIR / "temp_results"
 RESULTS_DIR.mkdir(exist_ok=True)
+
 
 @app.get("/")
 async def root():
@@ -36,10 +45,15 @@ async def root():
 async def health_check():
     """Проверка здоровья API и наличия модели"""
     model_exists = MODEL_DIR.exists()
+    model_files = []
+    if model_exists:
+        model_files = [f.name for f in MODEL_DIR.iterdir()]
+
     return {
         "status": "healthy",
         "model_loaded": model_exists,
-        "model_path": str(MODEL_DIR)
+        "model_path": str(MODEL_DIR.absolute()),
+        "model_files": model_files
     }
 
 
@@ -51,7 +65,12 @@ async def analyze_reviews(file: UploadFile = File(...)):
     if not file.filename.endswith('.csv'):
         raise HTTPException(status_code=400, detail="Only CSV files are accepted")
 
-    import uuid
+    if not MODEL_DIR.exists():
+        raise HTTPException(
+            status_code=500,
+            detail=f"Model not found at {MODEL_DIR.absolute()}. Please place your trained model there."
+        )
+
     request_id = str(uuid.uuid4())
     temp_dir_path = RESULTS_DIR / request_id
     temp_dir_path.mkdir(exist_ok=True)
@@ -77,14 +96,14 @@ async def analyze_reviews(file: UploadFile = File(...)):
         print(f"Processing {len(df)} reviews...")
 
         process_and_predict(
-            str(upload_path),
-            str(predictions_path),
-            model_dir=str(MODEL_DIR)
+            str(upload_path.absolute()),
+            str(predictions_path.absolute()),
+            model_dir=str(MODEL_DIR.absolute())
         )
 
         report_json_path = generate_analytics_report(
-            str(predictions_path),
-            output_dir=str(temp_dir_path)
+            str(predictions_path.absolute()),
+            output_dir=str(temp_dir_path.absolute())
         )
 
         with open(report_json_path, 'r', encoding='utf-8') as f:
@@ -95,6 +114,7 @@ async def analyze_reviews(file: UploadFile = File(...)):
                 if os.path.exists(img_path):
                     with open(img_path, 'rb') as img_file:
                         img_data = base64.b64encode(img_file.read()).decode('utf-8')
+
                         report_data['images'][img_key] = f"data:image/png;base64,{img_data}"
 
         report_data['download_id'] = request_id
@@ -121,7 +141,7 @@ async def download_results(request_id: str):
         raise HTTPException(status_code=404, detail="File not found or expired")
 
     return FileResponse(
-        path=predictions_path,
+        path=str(predictions_path.absolute()),
         filename=f"predictions_{request_id}.csv",
         media_type="text/csv"
     )
@@ -144,4 +164,7 @@ async def cleanup_results(request_id: str):
 if __name__ == "__main__":
     import uvicorn
 
+    print(f"Starting server...")
+    print(f"Model directory: {MODEL_DIR.absolute()}")
+    print(f"Results directory: {RESULTS_DIR.absolute()}")
     uvicorn.run(app, host="0.0.0.0", port=8000)

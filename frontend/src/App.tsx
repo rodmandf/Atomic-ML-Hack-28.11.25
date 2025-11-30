@@ -126,7 +126,6 @@ function App() {
                 }
             );
 
-            // Создаем ссылку для скачивания
             const url = window.URL.createObjectURL(new Blob([response.data]));
             const link = document.createElement('a');
             link.href = url;
@@ -136,7 +135,6 @@ function App() {
             link.remove();
             window.URL.revokeObjectURL(url);
 
-            // Опционально: очистка временных файлов на сервере
             await axios.delete(`http://localhost:8000/api/cleanup/${results.download_id}`);
         } catch (error) {
             console.error('Download error:', error);
@@ -147,7 +145,6 @@ function App() {
     };
 
     const handleReset = async () => {
-        // Очистка на сервере перед сбросом
         if (results?.download_id) {
             try {
                 await axios.delete(`http://localhost:8000/api/cleanup/${results.download_id}`);
@@ -176,7 +173,7 @@ function App() {
 
             <main className="site-content">
                 <div className="text-center mb-12">
-                    <h1 className="text-5xl font-bold mb-4 bg-gradient-to-r from-slate-900 to-slate-600 bg-clip-text text-transparent">
+                    <h1 className="text-center h-fit text-5xl font-bold mb-4 bg-gradient-to-r from-slate-900 to-slate-600 bg-clip-text text-transparent">
                         Загрузите список отзывов
                     </h1>
                     <p className="text-slate-600 text-lg max-w-2xl mx-auto">
@@ -190,7 +187,7 @@ function App() {
                             <Dropzone
                                 accept={{ 'text/csv': ['.csv'] }}
                                 maxFiles={1}
-                                maxSize={100 * 1024 * 1024}
+                                maxSize={1024 * 1024 * 1024}
                                 onDrop={handleDrop}
                                 src={files}
                                 disabled={loading}
@@ -235,10 +232,7 @@ function App() {
                                     className="px-6 py-3 !bg-green-600 !text-white hover:!bg-green-700 transition-colors flex items-center gap-2"
                                 >
                                     {downloading ? (
-                                        <>
-                                            <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
-                                            <span>Скачивание...</span>
-                                        </>
+                                        <Spinner/>
                                     ) : (
                                         <>
                                             <Download className="w-5 h-5" />
